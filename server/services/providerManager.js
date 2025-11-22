@@ -1,6 +1,5 @@
 const ClaudeProvider = require('./providers/claudeProvider');
 const OpenAIProvider = require('./providers/openaiProvider');
-const GeminiProvider = require('./providers/geminiProvider');
 
 /**
  * Provider Manager
@@ -29,15 +28,6 @@ class ProviderManager {
     this.providers.set('gpt-3.5-turbo', new OpenAIProvider({
       model: 'gpt-3.5-turbo'
     }));
-
-    // Gemini models
-    this.providers.set('gemini-pro', new GeminiProvider({
-      model: 'gemini-1.5-pro'
-    }));
-
-    this.providers.set('gemini-flash', new GeminiProvider({
-      model: 'gemini-1.5-flash'
-    }));
   }
 
   /**
@@ -59,9 +49,7 @@ class ProviderManager {
     const displayNames = {
       'claude-sonnet-4': 'Claude Sonnet 4 (Current)',
       'gpt-4': 'GPT-4 (Complex)',
-      'gpt-3.5-turbo': 'GPT-3.5 Turbo (Fast)',
-      'gemini-pro': 'Gemini Pro (Advanced)',
-      'gemini-flash': 'Gemini Flash (Fast)'
+      'gpt-3.5-turbo': 'GPT-3.5 Turbo (Fast)'
     };
     return displayNames[id] || `${provider.providerName} - ${provider.modelName}`;
   }
