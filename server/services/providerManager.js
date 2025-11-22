@@ -32,10 +32,6 @@ class ProviderManager {
     this.providers.set('gpt-4o-mini', new OpenAIProvider({
       model: 'gpt-4o-mini'
     }));
-
-    this.providers.set('gpt-3.5-turbo', new OpenAIProvider({
-      model: 'gpt-3.5-turbo'
-    }));
   }
 
   /**
@@ -58,8 +54,7 @@ class ProviderManager {
       'claude-sonnet-4': 'Claude Sonnet 4',
       'gpt-5': 'GPT-5 (Latest)',
       'gpt-4': 'GPT-4',
-      'gpt-4o-mini': 'GPT-4o Mini (Fast)',
-      'gpt-3.5-turbo': 'GPT-3.5 Turbo'
+      'gpt-4o-mini': 'GPT-4o Mini (Fast)'
     };
     return displayNames[id] || `${provider.providerName} - ${provider.modelName}`;
   }
