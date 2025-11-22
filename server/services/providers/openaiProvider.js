@@ -18,14 +18,27 @@ class OpenAIProvider extends BaseProvider {
 
   async analyzeText(text) {
     try {
-      // GPT-5 and newer models have different API constraints
-      const isNewModel = this.modelName.startsWith('gpt-5') ||
-                         this.modelName.startsWith('o1') ||
-                         this.modelName.startsWith('o3');
+      // GPT-5 and o-series are reasoning models with different constraints
+      const isReasoningModel = this.modelName.startsWith('gpt-5') ||
+                                this.modelName.startsWith('o1') ||
+                                this.modelName.startsWith('o3');
 
       const requestParams = {
         model: this.modelName,
-        messages: [
+        messages: []
+      };
+
+      // Reasoning models (GPT-5, o1, o3) don't support system prompts
+      // Combine system and user prompts into a single user message
+      if (isReasoningModel) {
+        requestParams.messages = [
+          {
+            role: 'user',
+            content: this.getSystemPrompt() + '\n\n' + this.getUserPrompt(text)
+          }
+        ];
+      } else {
+        requestParams.messages = [
           {
             role: 'system',
             content: this.getSystemPrompt()
@@ -34,16 +47,16 @@ class OpenAIProvider extends BaseProvider {
             role: 'user',
             content: this.getUserPrompt(text)
           }
-        ]
-      };
+        ];
+      }
 
-      // GPT-5 and newer models only support default temperature (1.0)
-      if (!isNewModel) {
+      // Reasoning models only support default temperature (1.0)
+      if (!isReasoningModel) {
         requestParams.temperature = 0.7;
       }
 
       // Use appropriate token limit parameter based on model
-      if (isNewModel) {
+      if (isReasoningModel) {
         requestParams.max_completion_tokens = 2048;
       } else {
         requestParams.max_tokens = 2048;
