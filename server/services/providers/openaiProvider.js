@@ -18,14 +18,13 @@ class OpenAIProvider extends BaseProvider {
 
   async analyzeText(text) {
     try {
-      // GPT-5 and newer models use max_completion_tokens instead of max_tokens
-      const usesNewTokenParam = this.modelName.startsWith('gpt-5') ||
-                                 this.modelName.startsWith('o1') ||
-                                 this.modelName.startsWith('o3');
+      // GPT-5 and newer models have different API constraints
+      const isNewModel = this.modelName.startsWith('gpt-5') ||
+                         this.modelName.startsWith('o1') ||
+                         this.modelName.startsWith('o3');
 
       const requestParams = {
         model: this.modelName,
-        temperature: 0.7,
         messages: [
           {
             role: 'system',
@@ -38,8 +37,13 @@ class OpenAIProvider extends BaseProvider {
         ]
       };
 
+      // GPT-5 and newer models only support default temperature (1.0)
+      if (!isNewModel) {
+        requestParams.temperature = 0.7;
+      }
+
       // Use appropriate token limit parameter based on model
-      if (usesNewTokenParam) {
+      if (isNewModel) {
         requestParams.max_completion_tokens = 2048;
       } else {
         requestParams.max_tokens = 2048;
