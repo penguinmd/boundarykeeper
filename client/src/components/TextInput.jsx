@@ -1,5 +1,9 @@
 import { useState } from 'react';
 
+const DEMO_TEXT = `I can't believe you're changing the schedule AGAIN with only two days notice. This is the third time this month you've decided your plans are more important than our agreement. You know I have to rearrange my entire work schedule to accommodate this, but I guess that doesn't matter to you.
+
+I'm also still waiting for you to pay your half of the school supplies like we agreed. It's been three weeks since I sent you the receipts. I shouldn't have to keep asking you to follow through on things you already committed to. But sure, go ahead and make your last-minute plans while I deal with everything else like always.`;
+
 export default function TextInput({ onAnalyze, loading }) {
   const [text, setText] = useState('');
 
@@ -12,6 +16,10 @@ export default function TextInput({ onAnalyze, loading }) {
 
   const handleClear = () => {
     setText('');
+  };
+
+  const handleFillDemo = () => {
+    setText(DEMO_TEXT);
   };
 
   const charCount = text.length;
@@ -45,7 +53,7 @@ export default function TextInput({ onAnalyze, loading }) {
         />
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-3">
-          <div className="flex gap-3">
+          <div className="flex gap-2 flex-wrap">
             <button
               type="submit"
               disabled={!!disabledReason}
@@ -53,6 +61,16 @@ export default function TextInput({ onAnalyze, loading }) {
               title={disabledReason || ''}
             >
               {loading ? 'Analyzing...' : 'Analyze Message'}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleFillDemo}
+              disabled={loading}
+              className="btn-secondary flex-1 sm:flex-none"
+              title="Fill with demo text to see how it works"
+            >
+              Try Demo
             </button>
 
             <button
