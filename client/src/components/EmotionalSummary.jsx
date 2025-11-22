@@ -1,3 +1,5 @@
+import { categorizeEmotion, getEmotionColors } from '../utils/emotionCategories';
+
 export default function EmotionalSummary({ emotions }) {
   if (!emotions || !emotions.summary || emotions.summary.length === 0) {
     return null;
@@ -12,14 +14,19 @@ export default function EmotionalSummary({ emotions }) {
             Emotions Detected
           </h3>
           <div className="flex flex-wrap gap-2">
-            {emotions.summary.map((emotion, index) => (
-              <span
-                key={index}
-                className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium capitalize"
-              >
-                {emotion}
-              </span>
-            ))}
+            {emotions.summary.map((emotion, index) => {
+              const category = categorizeEmotion(emotion, emotion);
+              const colors = getEmotionColors(category);
+
+              return (
+                <span
+                  key={index}
+                  className={`px-3 py-1 ${colors.badgeBg} ${colors.badgeText} rounded-full text-sm font-medium capitalize`}
+                >
+                  {emotion}
+                </span>
+              );
+            })}
           </div>
         </div>
       </div>

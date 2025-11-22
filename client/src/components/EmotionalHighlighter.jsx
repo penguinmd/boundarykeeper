@@ -1,10 +1,16 @@
+import { processHighlights } from '../utils/textHighlight';
+import { categorizeEmotion, getEmotionColors } from '../utils/emotionCategories';
+
 export default function EmotionalHighlighter({ text, highlights }) {
   if (!highlights || highlights.length === 0) {
     return <p className="text-gray-700 whitespace-pre-wrap">{text}</p>;
   }
 
+  // Process highlights to avoid splitting words and merge overlaps
+  const processedHighlights = processHighlights(text, highlights);
+
   // Sort highlights by start position
-  const sortedHighlights = [...highlights].sort((a, b) => a.start - b.start);
+  const sortedHighlights = [...processedHighlights].sort((a, b) => a.start - b.start);
 
   // Build array of text segments
   const segments = [];
@@ -20,11 +26,19 @@ export default function EmotionalHighlighter({ text, highlights }) {
       });
     }
 
+    // Get the highlighted text
+    const highlightedText = text.slice(highlight.start, highlight.end);
+
+    // Categorize emotion and get colors
+    const category = categorizeEmotion(highlight.reason, highlightedText);
+    const colors = getEmotionColors(category);
+
     // Add highlighted text
     segments.push({
       type: 'highlight',
-      content: text.slice(highlight.start, highlight.end),
+      content: highlightedText,
       reason: highlight.reason,
+      colors,
       key: `highlight-${idx}`
     });
 
@@ -47,7 +61,7 @@ export default function EmotionalHighlighter({ text, highlights }) {
           return (
             <span
               key={segment.key}
-              className="bg-red-100 text-red-900 px-1 rounded cursor-help border-b-2 border-red-300"
+              className={`${segment.colors.bg} ${segment.colors.text} px-1 rounded cursor-help border-b-2 ${segment.colors.border}`}
               title={segment.reason}
             >
               {segment.content}
