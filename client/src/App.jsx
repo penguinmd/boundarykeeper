@@ -4,6 +4,7 @@ import TextInput from './components/TextInput';
 import AnalysisResults from './components/AnalysisResults';
 import ConversationHistory from './components/ConversationHistory';
 import InfoTooltip from './components/InfoTooltip';
+import Footer from './components/Footer';
 import { analyzeText } from './services/api';
 import { saveConversation } from './utils/storage';
 
@@ -76,6 +77,8 @@ function App() {
         <TextInput onAnalyze={handleAnalyze} loading={loading} />
         <AnalysisResults result={result} />
       </main>
+
+      <Footer />
     </div>
   );
 }
