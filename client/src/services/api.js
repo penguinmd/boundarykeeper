@@ -9,12 +9,35 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000, // 30 seconds
+  timeout: 60000, // 60 seconds for multiple models
 });
 
-export async function analyzeText(text) {
+/**
+ * Get list of available models
+ */
+export async function getAvailableModels() {
   try {
-    const response = await api.post('/api/analyze', { text });
+    const response = await api.get('/api/models');
+    return response.data.models;
+  } catch (error) {
+    console.error('Error fetching models:', error);
+    throw new Error('Failed to fetch available models');
+  }
+}
+
+/**
+ * Analyze text with selected models
+ * @param {string} text - Text to analyze
+ * @param {string[]} models - Array of model IDs to use (optional)
+ */
+export async function analyzeText(text, models = null) {
+  try {
+    const payload = { text };
+    if (models && models.length > 0) {
+      payload.models = models;
+    }
+
+    const response = await api.post('/api/analyze', payload);
     return response.data;
   } catch (error) {
     if (error.response) {

@@ -5,6 +5,7 @@ import AnalysisResults from './components/AnalysisResults';
 import ConversationHistory from './components/ConversationHistory';
 import InfoTooltip from './components/InfoTooltip';
 import Footer from './components/Footer';
+import ModelSelector from './components/ModelSelector';
 import { analyzeText } from './services/api';
 import { saveConversation } from './utils/storage';
 
@@ -12,23 +13,37 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [historyKey, setHistoryKey] = useState(0);
+  const [selectedModels, setSelectedModels] = useState([]);
 
   const handleAnalyze = async (text) => {
     setLoading(true);
     setResult(null);
 
     try {
-      const data = await analyzeText(text);
+      const data = await analyzeText(text, selectedModels.length > 0 ? selectedModels : null);
 
-      // Validate response structure
-      if (!data.greyRock || !data.yellowRock) {
+      // Validate response structure (handle both old and new format)
+      const hasResults = data.results && Array.isArray(data.results);
+      if (!hasResults && (!data.greyRock || !data.yellowRock)) {
         throw new Error('Invalid response from server');
       }
 
       setResult(data);
       saveConversation(data);
       setHistoryKey(prev => prev + 1); // Trigger history reload
-      toast.success('Analysis complete!');
+
+      if (hasResults) {
+        const successCount = data.results.filter(r => !r.error).length;
+        const errorCount = data.results.filter(r => r.error).length;
+
+        if (errorCount > 0) {
+          toast.success(`${successCount} model(s) completed, ${errorCount} failed`);
+        } else {
+          toast.success(`Analysis complete with ${successCount} model(s)!`);
+        }
+      } else {
+        toast.success('Analysis complete!');
+      }
     } catch (error) {
       console.error('Analysis error:', error);
 
@@ -74,6 +89,15 @@ function App() {
           key={historyKey}
           onSelectConversation={handleSelectConversation}
         />
+
+        <div className="mb-6">
+          <ModelSelector
+            selectedModels={selectedModels}
+            onModelChange={setSelectedModels}
+            disabled={loading}
+          />
+        </div>
+
         <TextInput onAnalyze={handleAnalyze} loading={loading} />
         <AnalysisResults result={result} />
       </main>
