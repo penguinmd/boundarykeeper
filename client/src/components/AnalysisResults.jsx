@@ -44,21 +44,19 @@ export default function AnalysisResults({ result }) {
 
             {/* Analysis Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {/* Original Text with Highlights - only show for first result */}
-              {index === 0 && (
-                <div className="card">
-                  <h3 className="font-semibold text-gray-900 mb-3">
-                    Original Message
-                  </h3>
-                  <EmotionalHighlighter
-                    text={originalText}
-                    highlights={modelResult.emotions?.highlights}
-                  />
-                  <p className="text-xs text-gray-500 mt-3 italic">
-                    Hover over highlighted text to see why it's flagged
-                  </p>
-                </div>
-              )}
+              {/* Original Text with Highlights - show for each model */}
+              <div className="card">
+                <h3 className="font-semibold text-gray-900 mb-3">
+                  Original Message
+                </h3>
+                <EmotionalHighlighter
+                  text={originalText}
+                  highlights={modelResult.emotions?.highlights}
+                />
+                <p className="text-xs text-gray-500 mt-3 italic">
+                  Hover over highlighted text to see why it's flagged
+                </p>
+              </div>
 
               {/* Grey Rock */}
               <VersionCard
