@@ -62,6 +62,9 @@ class OpenAIProvider extends BaseProvider {
         requestParams.max_tokens = 2048;
       }
 
+      // Force JSON response format for all models
+      requestParams.response_format = { type: "json_object" };
+
       const completion = await this.client.chat.completions.create(requestParams);
 
       const responseText = completion.choices[0].message.content;

@@ -33,7 +33,7 @@ Your task:
 
 "${text}"
 
-Return ONLY valid JSON (no markdown, no explanation outside JSON):
+IMPORTANT: You must return ONLY valid JSON. Do not include any text before or after the JSON. Do not use markdown code blocks. Return pure JSON only.
 {
   "emotions": {
     "summary": ["list", "of", "emotion", "types"],
