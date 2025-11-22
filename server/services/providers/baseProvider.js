@@ -57,11 +57,23 @@ Return ONLY valid JSON (no markdown, no explanation outside JSON):
    * Handles responses that may contain markdown or other text around the JSON
    */
   extractJSON(responseText) {
-    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+    // First, try to remove markdown code blocks if present
+    let cleanedText = responseText.replace(/```json\s*\n?/g, '').replace(/```\s*$/g, '');
+
+    // Try to find JSON object
+    const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
+      console.error(`Full response from ${this.providerName}:`, responseText);
       throw new Error(`No JSON found in ${this.providerName} response`);
     }
-    return JSON.parse(jsonMatch[0]);
+
+    try {
+      return JSON.parse(jsonMatch[0]);
+    } catch (parseError) {
+      console.error(`JSON parse error from ${this.providerName}:`, parseError);
+      console.error('Attempted to parse:', jsonMatch[0]);
+      throw new Error(`Invalid JSON in ${this.providerName} response`);
+    }
   }
 
   /**

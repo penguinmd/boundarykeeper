@@ -16,6 +16,14 @@ class ProviderManager {
    */
   initializeProviders() {
     // Claude models
+    this.providers.set('claude-sonnet-4-5', new ClaudeProvider({
+      model: 'claude-sonnet-4-5-20250929'
+    }));
+
+    this.providers.set('claude-haiku-4-5', new ClaudeProvider({
+      model: 'claude-haiku-4-5'
+    }));
+
     this.providers.set('claude-sonnet-4', new ClaudeProvider({
       model: 'claude-sonnet-4-20250514'
     }));
@@ -51,6 +59,8 @@ class ProviderManager {
    */
   getDisplayName(id, provider) {
     const displayNames = {
+      'claude-sonnet-4-5': 'Claude Sonnet 4.5 (Latest)',
+      'claude-haiku-4-5': 'Claude Haiku 4.5 (Fast)',
       'claude-sonnet-4': 'Claude Sonnet 4',
       'gpt-5': 'GPT-5 (Latest)',
       'gpt-4': 'GPT-4',
