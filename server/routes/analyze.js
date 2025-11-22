@@ -1,11 +1,11 @@
 const express = require('express');
-const { analyzeText } = require('../services/claude');
+const providerManager = require('../services/providerManager');
 
 const router = express.Router();
 
 router.post('/analyze', async (req, res) => {
   try {
-    const { text } = req.body;
+    const { text, models } = req.body;
 
     // Validation
     if (!text || typeof text !== 'string') {
@@ -32,13 +32,22 @@ router.post('/analyze', async (req, res) => {
       });
     }
 
-    // Call Claude API
-    const result = await analyzeText(text);
+    // Validate models array if provided
+    if (models && !Array.isArray(models)) {
+      return res.status(400).json({
+        error: true,
+        message: 'Models must be an array',
+        code: 'INVALID_MODELS'
+      });
+    }
 
-    // Return result with original text
+    // Analyze with multiple models
+    const results = await providerManager.analyzeWithMultipleModels(models, text);
+
+    // Return results with original text
     res.json({
       original: text,
-      ...result
+      results
     });
 
   } catch (error) {

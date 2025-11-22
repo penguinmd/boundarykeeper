@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const analyzeRoute = require('./routes/analyze');
+const modelsRoute = require('./routes/models');
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.json({ limit: '10mb' }));
 
 // Routes
 app.use('/api', analyzeRoute);
+app.use('/api', modelsRoute);
 
 // Health check
 app.get('/health', (req, res) => {
