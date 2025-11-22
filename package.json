@@ -1,0 +1,17 @@
+{
+  "name": "boundarykeeper",
+  "version": "1.0.0",
+  "description": "Transform emotional messages into neutral, effective responses using AI-powered grey rock and yellow rock methodologies",
+  "private": true,
+  "scripts": {
+    "dev": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "preview": "cd client && npm run preview"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

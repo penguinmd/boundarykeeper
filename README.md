@@ -103,15 +103,30 @@ boundarykeeper/
 - **Implementation Plan**: See `docs/plans/2025-11-22-boundary-keeper-mvp.md`
 - **Original Research**: See `Boundary Keeper Plan.pdf`
 
+## Deployment
+
+**Ready to deploy?** See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment instructions.
+
+### Quick Deploy to Vercel (Recommended)
+
+1. Push to GitHub
+2. Import project to [Vercel](https://vercel.com)
+3. Add environment variable: `CLAUDE_API_KEY`
+4. Deploy!
+
+Your app will be live at `https://your-project-name.vercel.app`
+
+**Suggested project names**: grey-matter, rock-steady, neutral-ground, boundary-rock
+
 ## Development Workflow
 
 This project follows a structured development approach:
 
 1. **Design Phase** ✅ - Complete mission statement and architecture
 2. **Planning Phase** ✅ - Detailed implementation plan with 12 tasks
-3. **Implementation Phase** 🚧 - Currently here! Follow the plan step-by-step
-4. **Testing Phase** - Manual and automated testing
-5. **Deployment Phase** - Railway (backend) + Vercel (frontend)
+3. **Implementation Phase** ✅ - MVP complete and functional!
+4. **Testing Phase** ✅ - Manual testing complete
+5. **Deployment Phase** 🚀 - Ready for Vercel deployment!
 
 ## Features (MVP Complete! ✅)
 
@@ -140,7 +155,24 @@ MIT
 
 ## Next Actions
 
+### For Local Development:
 1. **Add your Claude API key** to `server/.env`
 2. **Test the backend**: `cd server && npm run dev`
 3. **Test the frontend**: `cd client && npm run dev`
-4. **Continue implementation** following the detailed plan in `docs/plans/2025-11-22-boundary-keeper-mvp.md`
+
+### For Production Deployment:
+1. **Deploy to Vercel**: Follow [DEPLOYMENT.md](./DEPLOYMENT.md)
+2. **Add API key** in Vercel environment variables
+3. **Share your app** with the world!
+
+## Architecture
+
+**Local Development**:
+- Frontend: React + Vite (port 5176)
+- Backend: Express server (port 3002)
+- Database: localStorage (browser-only)
+
+**Production (Vercel)**:
+- Frontend: Static React build served by Vercel CDN
+- Backend: Serverless function (`/api/analyze.js`)
+- Database: localStorage (browser-only)
