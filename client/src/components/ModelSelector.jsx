@@ -20,6 +20,17 @@ function ModelSelector({ selectedModels, onModelChange, disabled }) {
       const availableModels = await getAvailableModels();
       setModels(availableModels);
       setError(null);
+
+      // Auto-select Claude if no models are selected
+      if (selectedModels.length === 0) {
+        const claudeModel = availableModels.find(m =>
+          m.id.toLowerCase().includes('claude') ||
+          m.displayName.toLowerCase().includes('claude')
+        );
+        if (claudeModel) {
+          onModelChange([claudeModel.id]);
+        }
+      }
     } catch (err) {
       console.error('Failed to load models:', err);
       setError('Failed to load models');
@@ -40,79 +51,82 @@ function ModelSelector({ selectedModels, onModelChange, disabled }) {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">
-          Select AI Models
-        </h3>
-        <p className="text-sm text-gray-500">Loading models...</p>
+      <div className="animate-pulse flex space-x-4 items-center">
+        <div className="h-4 w-24 bg-slate-200 rounded"></div>
+        <div className="h-4 w-32 bg-slate-200 rounded"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">
-          Select AI Models
-        </h3>
-        <p className="text-sm text-red-600">{error}</p>
+      <div className="text-sm text-red-600 flex items-center gap-2">
+        <span>{error}</span>
         <button
           onClick={loadModels}
-          className="mt-2 text-sm text-blue-600 hover:text-blue-700"
+          className="text-blue-600 hover:text-blue-700 underline"
         >
-          Try again
+          Retry
         </button>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
-      <h3 className="text-sm font-semibold text-gray-900 mb-3">
-        Select AI Models
-      </h3>
-      <p className="text-xs text-gray-600 mb-3">
-        Choose one or more models to compare their responses
-      </p>
+    <div>
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+          <span>🤖</span> AI Models
+        </h3>
+        <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
+          {selectedModels.length} Selected
+        </span>
+      </div>
 
-      <div className="space-y-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
         {models.map((model) => (
           <label
             key={model.id}
-            className={`flex items-center space-x-3 p-2 rounded hover:bg-gray-50 transition-colors ${
-              disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-            }`}
+            className={`
+              relative p-3 rounded-xl border cursor-pointer transition-all duration-200
+              ${selectedModels.includes(model.id)
+                ? 'bg-blue-50 border-blue-200 shadow-sm ring-1 ring-blue-100'
+                : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'}
+              ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+            `}
           >
             <input
               type="checkbox"
               checked={selectedModels.includes(model.id)}
               onChange={() => handleToggle(model.id)}
               disabled={disabled}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+              className="sr-only"
             />
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-medium text-gray-900">
-                {model.displayName}
+            <div className="flex items-start gap-3">
+              <div className={`
+                mt-0.5 w-4 h-4 rounded border flex items-center justify-center transition-colors
+                ${selectedModels.includes(model.id)
+                  ? 'bg-blue-600 border-blue-600'
+                  : 'border-slate-300 bg-white'}
+              `}>
+                {selectedModels.includes(model.id) && (
+                  <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
               </div>
-              <div className="text-xs text-gray-500">
-                {model.provider} • {model.model}
+              <div>
+                <div className={`text-sm font-medium ${selectedModels.includes(model.id) ? 'text-blue-900' : 'text-slate-700'}`}>
+                  {model.displayName}
+                </div>
+                <div className="text-xs text-slate-500 mt-0.5">
+                  {model.provider}
+                </div>
               </div>
             </div>
           </label>
         ))}
       </div>
-
-      {selectedModels.length === 0 && (
-        <p className="mt-3 text-xs text-amber-600 bg-amber-50 rounded p-2">
-          ⚠️ No models selected. The default model will be used.
-        </p>
-      )}
-
-      {selectedModels.length > 0 && (
-        <p className="mt-3 text-xs text-blue-600 bg-blue-50 rounded p-2">
-          ✓ {selectedModels.length} model{selectedModels.length > 1 ? 's' : ''} selected
-        </p>
-      )}
     </div>
   );
 }

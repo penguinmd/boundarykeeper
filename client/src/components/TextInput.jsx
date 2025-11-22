@@ -37,61 +37,73 @@ export default function TextInput({ onAnalyze, loading }) {
   const disabledReason = getButtonDisabledReason();
 
   return (
-    <div className="card">
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="message-input" className="block text-sm font-medium text-gray-700 mb-2">
-          Your Message
-        </label>
-
+    <form onSubmit={handleSubmit} className="relative">
+      <div className="relative">
         <textarea
           id="message-input"
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Paste the message you need to respond to..."
-          className="w-full h-48 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-base"
+          className="w-full h-48 sm:h-64 p-6 bg-transparent border-none resize-none text-lg leading-relaxed placeholder:text-slate-300 focus:ring-0 text-slate-700"
           disabled={loading}
         />
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-3">
-          <div className="flex gap-2 flex-wrap">
-            <button
-              type="submit"
-              disabled={!!disabledReason}
-              className="btn-primary flex-1 sm:flex-none"
-              title={disabledReason || ''}
-            >
-              {loading ? 'Analyzing...' : 'Analyze Message'}
-            </button>
+        <div className="absolute bottom-4 right-4 flex items-center gap-3">
+          <span className={`text-xs font-medium transition-colors ${isOverLimit ? 'text-red-500' :
+            isNearLimit ? 'text-amber-500' :
+              'text-slate-300'
+            }`}>
+            {charCount}/{maxChars}
+          </span>
+        </div>
+      </div>
 
-            <button
-              type="button"
-              onClick={handleFillDemo}
-              disabled={loading}
-              className="btn-secondary flex-1 sm:flex-none"
-              title="Fill with demo text to see how it works"
-            >
-              Try Demo
-            </button>
+      <div className="flex items-center justify-between px-6 pb-6 pt-2">
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={handleFillDemo}
+            disabled={loading || text.length > 0}
+            className="text-sm font-medium text-slate-400 hover:text-blue-600 disabled:opacity-0 transition-all"
+          >
+            Example Demonstration
+          </button>
 
+          {text.length > 0 && (
             <button
               type="button"
               onClick={handleClear}
-              disabled={!text || loading}
-              className="btn-secondary flex-1 sm:flex-none"
+              disabled={loading}
+              className="text-sm font-medium text-slate-400 hover:text-red-600 transition-colors"
             >
               Clear
             </button>
-          </div>
-
-          <span className={`text-xs sm:text-sm text-center sm:text-right ${
-            isOverLimit ? 'text-red-600 font-semibold' :
-            isNearLimit ? 'text-yellow-600' :
-            'text-gray-500'
-          }`}>
-            {charCount} / {maxChars}
-          </span>
+          )}
         </div>
-      </form>
-    </div>
+
+        <button
+          type="submit"
+          disabled={!!disabledReason}
+          className="btn-primary flex items-center gap-2 shadow-blue-200"
+        >
+          {loading ? (
+            <>
+              <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>Analyzing...</span>
+            </>
+          ) : (
+            <>
+              <span>Analyze Message</span>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </>
+          )}
+        </button>
+      </div>
+    </form>
   );
 }

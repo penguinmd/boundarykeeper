@@ -65,41 +65,63 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Toaster position="top-right" />
+    <div className="min-h-screen bg-slate-50 flex flex-col">
+      <Toaster position="top-center" toastOptions={{
+        className: '!rounded-xl !shadow-lg !text-slate-800',
+        duration: 4000,
+      }} />
 
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                🏔️ Boundary Keeper
-              </h1>
-              <p className="text-sm sm:text-base text-gray-600 mt-1">
-                Transform emotional messages into neutral, effective responses
-              </p>
+      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-10">
+        <div className="max-w-5xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="bg-blue-600 text-white p-2 rounded-lg shadow-sm">
+                <span className="text-xl">🏔️</span>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-slate-900 leading-tight">
+                  Boundary Keeper
+                </h1>
+                <p className="text-xs text-slate-500 font-medium">
+                  Professional Communication Assistant
+                </p>
+              </div>
             </div>
             <InfoTooltip />
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <ConversationHistory
-          key={historyKey}
-          onSelectConversation={handleSelectConversation}
-        />
-
-        <div className="mb-6">
-          <ModelSelector
-            selectedModels={selectedModels}
-            onModelChange={setSelectedModels}
-            disabled={loading}
-          />
+      <main className="flex-grow max-w-5xl mx-auto w-full px-4 py-8 sm:py-12 space-y-8">
+        <div className="text-center space-y-2 mb-8">
+          <p className="text-lg text-slate-600 max-w-xl mx-auto">
+            Transform emotional messages into neutral, effective responses that maintain your boundaries.
+          </p>
         </div>
 
-        <TextInput onAnalyze={handleAnalyze} loading={loading} />
+        <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200/60 overflow-hidden">
+          <div className="p-1">
+            <TextInput onAnalyze={handleAnalyze} loading={loading} />
+          </div>
+
+          <div className="bg-slate-50/50 border-t border-slate-100 p-4">
+            <ModelSelector
+              selectedModels={selectedModels}
+              onModelChange={setSelectedModels}
+              disabled={loading}
+            />
+          </div>
+        </div>
+
         <AnalysisResults result={result} />
+
+        <div className="pt-8 border-t border-slate-200">
+          <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Recent History</h3>
+          <ConversationHistory
+            key={historyKey}
+            onSelectConversation={handleSelectConversation}
+          />
+        </div>
       </main>
 
       <Footer />

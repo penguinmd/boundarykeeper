@@ -4,7 +4,6 @@ import { getConversations, clearConversations } from '../utils/storage';
 
 export default function ConversationHistory({ onSelectConversation }) {
   const [conversations, setConversations] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     loadConversations();
@@ -29,8 +28,8 @@ export default function ConversationHistory({ onSelectConversation }) {
 
   const handleSelect = (conversation) => {
     onSelectConversation(conversation);
-    setIsOpen(false);
     toast.success('Conversation loaded');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const formatDate = (timestamp) => {
@@ -48,61 +47,54 @@ export default function ConversationHistory({ onSelectConversation }) {
     return date.toLocaleDateString();
   };
 
-  const truncate = (text, maxLength = 50) => {
+  const truncate = (text, maxLength = 60) => {
     if (text.length <= maxLength) return text;
     return text.slice(0, maxLength) + '...';
   };
 
   if (conversations.length === 0) {
-    return null;
+    return (
+      <div className="text-center py-8 text-slate-400 text-sm">
+        No recent conversations
+      </div>
+    );
   }
 
   return (
-    <div className="mb-6">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="btn-secondary"
-      >
-        📜 History ({conversations.length})
-      </button>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between px-2">
+        <span className="text-xs font-medium text-slate-500">
+          {conversations.length} saved
+        </span>
+        <button
+          onClick={handleClear}
+          className="text-xs text-red-500 hover:text-red-600 font-medium transition-colors"
+        >
+          Clear All
+        </button>
+      </div>
 
-      {isOpen && (
-        <div className="card mt-3">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900">
-              Recent Conversations
-            </h3>
-            <button
-              onClick={handleClear}
-              className="text-sm text-red-600 hover:text-red-800"
-            >
-              Clear All
-            </button>
-          </div>
-
-          <div className="space-y-2 max-h-96 overflow-y-auto">
-            {conversations.map(convo => (
-              <button
-                key={convo.id}
-                onClick={() => handleSelect(convo)}
-                className="w-full text-left p-3 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-900 font-medium truncate">
-                      {truncate(convo.original)}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {formatDate(convo.timestamp)}
-                    </p>
-                  </div>
-                  <span className="text-xs text-gray-400">→</span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {conversations.map(convo => (
+          <button
+            key={convo.id}
+            onClick={() => handleSelect(convo)}
+            className="group text-left p-4 bg-white hover:bg-blue-50/50 rounded-xl border border-slate-200 hover:border-blue-200 transition-all duration-200 shadow-sm hover:shadow-md"
+          >
+            <div className="flex flex-col h-full justify-between gap-3">
+              <p className="text-sm text-slate-700 font-medium line-clamp-2 group-hover:text-blue-900 transition-colors">
+                "{truncate(convo.original)}"
+              </p>
+              <div className="flex items-center justify-between text-xs text-slate-400 group-hover:text-blue-400">
+                <span>{formatDate(convo.timestamp)}</span>
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+                  Load →
+                </span>
+              </div>
+            </div>
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
