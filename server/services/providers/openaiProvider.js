@@ -18,9 +18,13 @@ class OpenAIProvider extends BaseProvider {
 
   async analyzeText(text) {
     try {
-      const completion = await this.client.chat.completions.create({
+      // GPT-5 and newer models use max_completion_tokens instead of max_tokens
+      const usesNewTokenParam = this.modelName.startsWith('gpt-5') ||
+                                 this.modelName.startsWith('o1') ||
+                                 this.modelName.startsWith('o3');
+
+      const requestParams = {
         model: this.modelName,
-        max_tokens: 2048,
         temperature: 0.7,
         messages: [
           {
@@ -32,7 +36,16 @@ class OpenAIProvider extends BaseProvider {
             content: this.getUserPrompt(text)
           }
         ]
-      });
+      };
+
+      // Use appropriate token limit parameter based on model
+      if (usesNewTokenParam) {
+        requestParams.max_completion_tokens = 2048;
+      } else {
+        requestParams.max_tokens = 2048;
+      }
+
+      const completion = await this.client.chat.completions.create(requestParams);
 
       const responseText = completion.choices[0].message.content;
       const result = this.extractJSON(responseText);
