@@ -1,5 +1,6 @@
 const ClaudeProvider = require('./providers/claudeProvider');
 const OpenAIProvider = require('./providers/openaiProvider');
+const GeminiProvider = require('./providers/geminiProvider');
 
 /**
  * Provider Manager
@@ -29,8 +30,12 @@ class ProviderManager {
     }));
 
     // OpenAI models
-    this.providers.set('gpt-5', new OpenAIProvider({
-      model: 'gpt-5'
+    this.providers.set('gpt-5.1', new OpenAIProvider({
+      model: 'gpt-5.1'
+    }));
+
+    this.providers.set('gpt-5.1-chat-latest', new OpenAIProvider({
+      model: 'gpt-5.1-chat-latest'
     }));
 
     this.providers.set('gpt-4', new OpenAIProvider({
@@ -39,6 +44,15 @@ class ProviderManager {
 
     this.providers.set('gpt-4o-mini', new OpenAIProvider({
       model: 'gpt-4o-mini'
+    }));
+
+    // Google Gemini models
+    this.providers.set('gemini-2.5-pro', new GeminiProvider({
+      model: 'gemini-2.5-pro'
+    }));
+
+    this.providers.set('gemini-2.5-flash', new GeminiProvider({
+      model: 'gemini-2.5-flash'
     }));
   }
 
@@ -62,9 +76,12 @@ class ProviderManager {
       'claude-sonnet-4-5': 'Claude Sonnet 4.5 (Latest)',
       'claude-haiku-4-5': 'Claude Haiku 4.5 (Fast)',
       'claude-sonnet-4': 'Claude Sonnet 4',
-      'gpt-5': 'GPT-5 (Latest)',
+      'gpt-5.1': 'GPT-5.1 Thinking (Latest)',
+      'gpt-5.1-chat-latest': 'GPT-5.1 Instant (Fast)',
       'gpt-4': 'GPT-4',
-      'gpt-4o-mini': 'GPT-4o Mini (Fast)'
+      'gpt-4o-mini': 'GPT-4o Mini (Fast)',
+      'gemini-2.5-pro': 'Gemini 2.5 Pro (Latest)',
+      'gemini-2.5-flash': 'Gemini 2.5 Flash (Fast)'
     };
     return displayNames[id] || `${provider.providerName} - ${provider.modelName}`;
   }

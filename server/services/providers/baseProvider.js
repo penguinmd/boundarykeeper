@@ -60,18 +60,19 @@ IMPORTANT: You must return ONLY valid JSON. Do not include any text before or af
     // First, try to remove markdown code blocks if present
     let cleanedText = responseText.replace(/```json\s*\n?/g, '').replace(/```\s*$/g, '');
 
-    // Try to find JSON object
+    // Try to find JSON object - match from first { to last }
     const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      console.error(`Full response from ${this.providerName}:`, responseText);
+      console.error(`Full response from ${this.providerName} (model: ${this.modelName}):`, responseText);
       throw new Error(`No JSON found in ${this.providerName} response`);
     }
 
     try {
       return JSON.parse(jsonMatch[0]);
     } catch (parseError) {
-      console.error(`JSON parse error from ${this.providerName}:`, parseError);
-      console.error('Attempted to parse:', jsonMatch[0]);
+      console.error(`JSON parse error from ${this.providerName} (model: ${this.modelName}):`, parseError);
+      console.error('Full response:', responseText);
+      console.error('Attempted to parse:', jsonMatch[0].substring(0, 500) + '...');
       throw new Error(`Invalid JSON in ${this.providerName} response`);
     }
   }

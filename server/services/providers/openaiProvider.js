@@ -18,7 +18,7 @@ class OpenAIProvider extends BaseProvider {
 
   async analyzeText(text) {
     try {
-      // GPT-5 and o-series are reasoning models with different constraints
+      // GPT-5, GPT-5.1, and o-series are reasoning models with different constraints
       const isReasoningModel = this.modelName.startsWith('gpt-5') ||
                                 this.modelName.startsWith('o1') ||
                                 this.modelName.startsWith('o3');
@@ -58,9 +58,14 @@ class OpenAIProvider extends BaseProvider {
       // Use appropriate token limit parameter based on model
       if (isReasoningModel) {
         requestParams.max_completion_tokens = 2048;
-        // GPT-5 requires reasoning_effort parameter
+        // GPT-5 and GPT-5.1 reasoning models require reasoning_effort parameter
         if (this.modelName.startsWith('gpt-5')) {
-          requestParams.reasoning_effort = 'low'; // Use minimal reasoning for faster responses
+          // GPT-5.1 models only support 'medium', older GPT-5 supports 'low'
+          if (this.modelName.startsWith('gpt-5.1')) {
+            requestParams.reasoning_effort = 'medium';
+          } else {
+            requestParams.reasoning_effort = 'low';
+          }
         }
       } else {
         requestParams.max_tokens = 2048;
