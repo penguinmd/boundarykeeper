@@ -9,7 +9,9 @@
     "preview": "cd client && npm run preview"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.32.1"
+    "@anthropic-ai/sdk": "^0.32.1",
+    "@google/generative-ai": "^0.21.0",
+    "openai": "^4.104.0"
   },
   "engines": {
     "node": ">=18.0.0"
