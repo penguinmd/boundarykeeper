@@ -1,6 +1,5 @@
-// Import provider manager and shared validation
-const providerManager = require('../server/services/providerManager');
-const { validateAnalyzeRequest, handleApiError } = require('../server/utils/validation');
+const providerManager = require('./services/providerManager');
+const { validateAnalyzeRequest, handleApiError } = require('./utils/validation');
 
 module.exports = async (req, res) => {
   // Handle preflight (CORS headers are set in vercel.json)

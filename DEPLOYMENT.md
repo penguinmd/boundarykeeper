@@ -80,7 +80,15 @@ vercel --prod
 ```
 boundarykeeper/
 ├── api/
-│   └── analyze.js          # Serverless function for Claude API
+│   ├── analyze.js          # Serverless function for text analysis
+│   ├── models.js           # Serverless function for available models
+│   └── services/           # Shared backend services
+│       ├── providerManager.js
+│       └── providers/
+│           ├── baseProvider.js
+│           ├── claudeProvider.js
+│           ├── openaiProvider.js
+│           └── geminiProvider.js
 ├── client/
 │   ├── dist/               # Built frontend (generated)
 │   ├── src/                # React source code
@@ -98,14 +106,16 @@ boundarykeeper/
 
 ### Environment Variables
 
-Only one environment variable is needed:
+Set these in Vercel Dashboard (Project Settings → Environment Variables):
 
+**Required (at least one):**
 - `CLAUDE_API_KEY` - Your Anthropic API key
 
-Set in Vercel Dashboard:
-1. Project Settings → Environment Variables
-2. Add `CLAUDE_API_KEY`
-3. Available for: Production, Preview, Development
+**Optional (for multi-provider support):**
+- `OPENAI_API_KEY` - Your OpenAI API key
+- `GEMINI_API_KEY` - Your Google Gemini API key
+
+Make them available for: Production, Preview, Development
 
 ### Suggested Project Names
 
@@ -151,17 +161,17 @@ Vercel provides automatic monitoring:
 ### Local Development
 
 ```bash
+# Install Vercel CLI
+npm install -g vercel
+
 # Install dependencies
 cd client && npm install
-cd .. && npm install
+cd ..
 
-# Run development server
-npm run dev
-
-# Frontend runs on http://localhost:5176
-# API calls go to local Express server on :3002 (if running)
-# Or use Vercel dev for testing serverless functions:
+# Run local development with serverless functions
 vercel dev
+
+# This runs both frontend and API locally
 ```
 
 ### Troubleshooting
@@ -182,23 +192,6 @@ vercel dev
 - Verify `client/src/services/api.js` uses relative path in production
 - Check Network tab in browser DevTools
 
-### Alternative Deployment Options
-
-#### Railway (Backend) + Vercel (Frontend)
-
-If you prefer keeping the Express server:
-
-1. Deploy `server/` folder to Railway
-2. Deploy `client/` to Vercel
-3. Set `VITE_API_URL` in Vercel to Railway backend URL
-
-#### Self-Hosted
-
-1. Build frontend: `cd client && npm run build`
-2. Serve `client/dist` with any static file server
-3. Run Express server: `cd server && npm start`
-4. Set `VITE_API_URL` environment variable
-
 ---
 
 ## Summary
@@ -206,7 +199,7 @@ If you prefer keeping the Express server:
 For the simplest deployment experience:
 1. Push code to GitHub
 2. Import to Vercel
-3. Add `CLAUDE_API_KEY` environment variable
+3. Add API key environment variables (`CLAUDE_API_KEY`, optionally `OPENAI_API_KEY`, `GEMINI_API_KEY`)
 4. Choose a creative domain name
 5. Deploy and share!
 

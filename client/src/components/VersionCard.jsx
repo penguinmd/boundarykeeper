@@ -44,7 +44,7 @@ export default function VersionCard({
       </div>
 
       <div className={`flex-grow whitespace-pre-wrap mb-6 text-sm leading-relaxed ${textColor}`}>
-        {text}
+        {typeof text === 'string' ? text : JSON.stringify(text)}
       </div>
 
       {explanation && (
@@ -64,7 +64,7 @@ export default function VersionCard({
             ${showExplanation ? 'max-h-48 opacity-100 mt-3' : 'max-h-0 opacity-0'}
           `}>
             <p className="text-xs text-slate-500 bg-white/50 p-3 rounded-lg border border-slate-100">
-              {explanation}
+              {typeof explanation === 'string' ? explanation : JSON.stringify(explanation)}
             </p>
           </div>
         </div>

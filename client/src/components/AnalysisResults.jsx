@@ -23,7 +23,9 @@ export default function AnalysisResults({ result }) {
                 </svg>
                 {modelResult.displayName || modelResult.modelId || 'Model'} - Error
               </h3>
-              <p className="text-sm text-red-700">{modelResult.error}</p>
+              <p className="text-sm text-red-700">
+                {typeof modelResult.error === 'string' ? modelResult.error : JSON.stringify(modelResult.error)}
+              </p>
             </div>
           );
         }

@@ -29,58 +29,40 @@ The MVP is **fully functional** and ready to use. All planned features are imple
 - Node.js 18+ installed
 - Claude API key from [Anthropic Console](https://console.anthropic.com/)
 
-### Setup
+### Setup (Vercel Deployment)
 
-1. **Configure Backend API Key**
-```bash
-# Edit server/.env and add your Claude API key
-cd server
-# Replace the placeholder with your actual key:
-# CLAUDE_API_KEY=sk-ant-api03-your-actual-key-here
-```
+1. **Push to GitHub**
+2. **Import to Vercel** at [vercel.com](https://vercel.com)
+3. **Add Environment Variables** in Vercel dashboard:
+   - `CLAUDE_API_KEY` - Your Anthropic API key
+   - `OPENAI_API_KEY` - Your OpenAI API key (optional)
+   - `GEMINI_API_KEY` - Your Google Gemini API key (optional)
+4. **Deploy!**
 
-2. **Start Backend** (Terminal 1)
-```bash
-cd server
-npm run dev
-# Server will run on http://localhost:3001
-```
-
-3. **Start Frontend** (Terminal 2)
-```bash
-cd client
-npm run dev
-# Frontend will run on http://localhost:5173
-```
-
-4. **Open Browser**
-Visit http://localhost:5173
+Your app will be live at `https://your-project-name.vercel.app`
 
 ## Project Structure
 
 ```
 boundarykeeper/
+├── api/                    # Vercel serverless functions
+│   ├── analyze.js         # POST /api/analyze endpoint
+│   ├── models.js          # GET /api/models endpoint
+│   └── services/          # Shared backend services
+│       ├── providerManager.js
+│       └── providers/     # LLM provider integrations
+│           ├── baseProvider.js
+│           ├── claudeProvider.js
+│           ├── openaiProvider.js
+│           └── geminiProvider.js
 ├── client/                 # React frontend (Vite + Tailwind)
 │   ├── src/
-│   │   ├── components/    # React components (to be built)
-│   │   ├── services/      # API integration (to be built)
-│   │   ├── utils/         # Helper functions (to be built)
+│   │   ├── components/    # React components
+│   │   ├── services/      # API integration
+│   │   ├── utils/         # Helper functions
 │   │   └── App.jsx        # Main app
 │   └── package.json
-├── server/                 # Express backend
-│   ├── routes/
-│   │   └── analyze.js     # /api/analyze endpoint
-│   ├── services/
-│   │   └── claude.js      # Claude API integration
-│   ├── server.js          # Express server
-│   └── .env               # ⚠️ Add your Claude API key here!
 ├── docs/                   # Documentation
-│   ├── plans/
-│   │   ├── 2025-11-22-mvp-design.md           # Design document
-│   │   └── 2025-11-22-boundary-keeper-mvp.md  # Implementation plan
-│   ├── api/
-│   ├── architecture/
-│   └── user-guides/
 └── README.md
 ```
 
@@ -93,9 +75,11 @@ boundarykeeper/
 - React Hot Toast for notifications
 
 **Backend:**
-- Node.js / Express
-- Anthropic Claude API (Sonnet 4.5)
-- CORS & Helmet security
+- Vercel Serverless Functions
+- Multi-provider AI support:
+  - Anthropic Claude (Sonnet 4.5, Haiku 4.5, Sonnet 4)
+  - OpenAI GPT (GPT-5.1, GPT-4, GPT-4o-mini)
+  - Google Gemini (2.5 Pro, 2.5 Flash)
 
 ## Documentation
 
@@ -143,11 +127,9 @@ This project follows a structured development approach:
 
 ## Important Notes
 
-⚠️ **REQUIRED:** You must add your Claude API key to `server/.env` before the backend will work.
+⚠️ **REQUIRED:** You must add your API keys to Vercel environment variables before the backend will work.
 
 💡 **Privacy:** All conversation history is stored in your browser's localStorage. Nothing is saved to remote servers.
-
-📖 **Implementation:** Follow `docs/plans/2025-11-22-boundary-keeper-mvp.md` for detailed step-by-step implementation instructions.
 
 ## License
 
@@ -155,24 +137,14 @@ MIT
 
 ## Next Actions
 
-### For Local Development:
-1. **Add your Claude API key** to `server/.env`
-2. **Test the backend**: `cd server && npm run dev`
-3. **Test the frontend**: `cd client && npm run dev`
-
 ### For Production Deployment:
 1. **Deploy to Vercel**: Follow [DEPLOYMENT.md](./DEPLOYMENT.md)
-2. **Add API key** in Vercel environment variables
+2. **Add API keys** in Vercel environment variables
 3. **Share your app** with the world!
 
 ## Architecture
 
-**Local Development**:
-- Frontend: React + Vite (port 5176)
-- Backend: Express server (port 3002)
-- Database: localStorage (browser-only)
-
 **Production (Vercel)**:
 - Frontend: Static React build served by Vercel CDN
-- Backend: Serverless function (`/api/analyze.js`)
-- Database: localStorage (browser-only)
+- Backend: Serverless functions (`/api/analyze.js`, `/api/models.js`)
+- Storage: localStorage (browser-only, for conversation history)

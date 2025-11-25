@@ -1,5 +1,4 @@
-// Import provider manager
-const providerManager = require('../server/services/providerManager');
+const providerManager = require('./services/providerManager');
 
 module.exports = async (req, res) => {
   // Enable CORS

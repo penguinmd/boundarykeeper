@@ -15,7 +15,9 @@ export default function EmotionalSummary({ emotions }) {
           </h3>
           <div className="flex flex-wrap gap-2">
             {emotions.summary.map((emotion, index) => {
-              const category = categorizeEmotion(emotion, emotion);
+              // Ensure emotion is a string (handle malformed data)
+              const emotionText = typeof emotion === 'string' ? emotion : String(emotion);
+              const category = categorizeEmotion(emotionText, emotionText);
               const colors = getEmotionColors(category);
 
               return (
@@ -23,7 +25,7 @@ export default function EmotionalSummary({ emotions }) {
                   key={index}
                   className={`px-3 py-1 ${colors.badgeBg} ${colors.badgeText} rounded-full text-sm font-medium capitalize`}
                 >
-                  {emotion}
+                  {emotionText}
                 </span>
               );
             })}
