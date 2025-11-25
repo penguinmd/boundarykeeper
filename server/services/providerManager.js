@@ -3,12 +3,68 @@ const OpenAIProvider = require('./providers/openaiProvider');
 const GeminiProvider = require('./providers/geminiProvider');
 
 /**
+ * Model configuration with display names
+ * Single source of truth for all model metadata
+ */
+const MODEL_CONFIG = {
+  // Claude models
+  'claude-sonnet-4-5': {
+    Provider: ClaudeProvider,
+    model: 'claude-sonnet-4-5-20250929',
+    displayName: 'Claude Sonnet 4.5 (Latest)'
+  },
+  'claude-haiku-4-5': {
+    Provider: ClaudeProvider,
+    model: 'claude-haiku-4-5',
+    displayName: 'Claude Haiku 4.5 (Fast)'
+  },
+  'claude-sonnet-4': {
+    Provider: ClaudeProvider,
+    model: 'claude-sonnet-4-20250514',
+    displayName: 'Claude Sonnet 4'
+  },
+  // OpenAI models
+  'gpt-5.1': {
+    Provider: OpenAIProvider,
+    model: 'gpt-5.1',
+    displayName: 'GPT-5.1 Thinking (Latest)'
+  },
+  'gpt-5.1-chat-latest': {
+    Provider: OpenAIProvider,
+    model: 'gpt-5.1-chat-latest',
+    displayName: 'GPT-5.1 Instant (Fast)'
+  },
+  'gpt-4': {
+    Provider: OpenAIProvider,
+    model: 'gpt-4',
+    displayName: 'GPT-4'
+  },
+  'gpt-4o-mini': {
+    Provider: OpenAIProvider,
+    model: 'gpt-4o-mini',
+    displayName: 'GPT-4o Mini (Fast)'
+  },
+  // Google Gemini models
+  'gemini-2.5-pro': {
+    Provider: GeminiProvider,
+    model: 'gemini-2.5-pro',
+    displayName: 'Gemini 2.5 Pro (Latest)'
+  },
+  'gemini-2.5-flash': {
+    Provider: GeminiProvider,
+    model: 'gemini-2.5-flash',
+    displayName: 'Gemini 2.5 Flash (Fast)'
+  }
+};
+
+/**
  * Provider Manager
  * Manages multiple LLM providers and models
  */
 class ProviderManager {
   constructor() {
     this.providers = new Map();
+    this.modelConfig = MODEL_CONFIG;
     this.initializeProviders();
   }
 
@@ -16,44 +72,10 @@ class ProviderManager {
    * Initialize all available providers with their models
    */
   initializeProviders() {
-    // Claude models
-    this.providers.set('claude-sonnet-4-5', new ClaudeProvider({
-      model: 'claude-sonnet-4-5-20250929'
-    }));
-
-    this.providers.set('claude-haiku-4-5', new ClaudeProvider({
-      model: 'claude-haiku-4-5'
-    }));
-
-    this.providers.set('claude-sonnet-4', new ClaudeProvider({
-      model: 'claude-sonnet-4-20250514'
-    }));
-
-    // OpenAI models
-    this.providers.set('gpt-5.1', new OpenAIProvider({
-      model: 'gpt-5.1'
-    }));
-
-    this.providers.set('gpt-5.1-chat-latest', new OpenAIProvider({
-      model: 'gpt-5.1-chat-latest'
-    }));
-
-    this.providers.set('gpt-4', new OpenAIProvider({
-      model: 'gpt-4'
-    }));
-
-    this.providers.set('gpt-4o-mini', new OpenAIProvider({
-      model: 'gpt-4o-mini'
-    }));
-
-    // Google Gemini models
-    this.providers.set('gemini-2.5-pro', new GeminiProvider({
-      model: 'gemini-2.5-pro'
-    }));
-
-    this.providers.set('gemini-2.5-flash', new GeminiProvider({
-      model: 'gemini-2.5-flash'
-    }));
+    for (const [id, config] of Object.entries(this.modelConfig)) {
+      const { Provider, model } = config;
+      this.providers.set(id, new Provider({ model }));
+    }
   }
 
   /**
@@ -64,7 +86,7 @@ class ProviderManager {
       id,
       provider: provider.providerName,
       model: provider.modelName,
-      displayName: this.getDisplayName(id, provider)
+      displayName: this.modelConfig[id].displayName
     }));
   }
 
@@ -72,18 +94,7 @@ class ProviderManager {
    * Get user-friendly display name for a model
    */
   getDisplayName(id, provider) {
-    const displayNames = {
-      'claude-sonnet-4-5': 'Claude Sonnet 4.5 (Latest)',
-      'claude-haiku-4-5': 'Claude Haiku 4.5 (Fast)',
-      'claude-sonnet-4': 'Claude Sonnet 4',
-      'gpt-5.1': 'GPT-5.1 Thinking (Latest)',
-      'gpt-5.1-chat-latest': 'GPT-5.1 Instant (Fast)',
-      'gpt-4': 'GPT-4',
-      'gpt-4o-mini': 'GPT-4o Mini (Fast)',
-      'gemini-2.5-pro': 'Gemini 2.5 Pro (Latest)',
-      'gemini-2.5-flash': 'Gemini 2.5 Flash (Fast)'
-    };
-    return displayNames[id] || `${provider.providerName} - ${provider.modelName}`;
+    return this.modelConfig[id]?.displayName || `${provider.providerName} - ${provider.modelName}`;
   }
 
   /**

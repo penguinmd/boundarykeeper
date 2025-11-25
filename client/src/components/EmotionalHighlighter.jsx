@@ -7,10 +7,8 @@ export default function EmotionalHighlighter({ text, highlights }) {
   }
 
   // Process highlights to avoid splitting words and merge overlaps
-  const processedHighlights = processHighlights(text, highlights);
-
-  // Sort highlights by start position
-  const sortedHighlights = [...processedHighlights].sort((a, b) => a.start - b.start);
+  // Sort highlights by start position (processHighlights returns a new array, no need to copy)
+  const sortedHighlights = processHighlights(text, highlights).sort((a, b) => a.start - b.start);
 
   // Build array of text segments
   const segments = [];

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { getAvailableModels } from '../services/api';
 
 /**
@@ -11,20 +11,18 @@ function ModelSelector({ selectedModels, onModelChange, disabled }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const hasAutoSelected = useRef(false);
 
-  useEffect(() => {
-    loadModels();
-  }, []);
-
-  const loadModels = async () => {
+  const loadModels = useCallback(async () => {
     try {
       setLoading(true);
       const availableModels = await getAvailableModels();
       setModels(availableModels);
       setError(null);
 
-      // Auto-select Claude if no models are selected
-      if (selectedModels.length === 0) {
+      // Auto-select Claude only once on initial load
+      if (!hasAutoSelected.current && selectedModels.length === 0) {
+        hasAutoSelected.current = true;
         const claudeModel = availableModels.find(m =>
           m.id.toLowerCase().includes('claude') ||
           m.displayName.toLowerCase().includes('claude')
@@ -39,7 +37,11 @@ function ModelSelector({ selectedModels, onModelChange, disabled }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [onModelChange, selectedModels.length]);
+
+  useEffect(() => {
+    loadModels();
+  }, [loadModels]);
 
   const handleToggle = (modelId) => {
     if (disabled) return;
@@ -74,14 +76,14 @@ function ModelSelector({ selectedModels, onModelChange, disabled }) {
     );
   }
 
-  const getSelectedModelNames = () => {
+  const selectedModelNames = useMemo(() => {
     if (selectedModels.length === 0) return 'Default (Claude)';
     if (selectedModels.length === 1) {
       const model = models.find(m => m.id === selectedModels[0]);
       return model?.displayName || selectedModels[0];
     }
     return `${selectedModels.length} models`;
-  };
+  }, [selectedModels, models]);
 
   return (
     <div>
@@ -102,7 +104,7 @@ function ModelSelector({ selectedModels, onModelChange, disabled }) {
               AI Models
             </h3>
             <p className="text-xs text-slate-500">
-              {getSelectedModelNames()}
+              {selectedModelNames}
             </p>
           </div>
         </div>
