@@ -33,8 +33,8 @@ function App() {
       setHistoryKey(prev => prev + 1); // Trigger history reload
 
       if (hasResults) {
-        const successCount = data.results.filter(r => !r.error).length;
         const errorCount = data.results.filter(r => r.error).length;
+        const successCount = data.results.length - errorCount;
 
         if (errorCount > 0) {
           toast.success(`${successCount} model(s) completed, ${errorCount} failed`);
