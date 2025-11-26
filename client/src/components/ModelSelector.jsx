@@ -43,6 +43,16 @@ function ModelSelector({ selectedModels, onModelChange, disabled }) {
     loadModels();
   }, [loadModels]);
 
+  // useMemo must be called before any early returns to maintain consistent hook count
+  const selectedModelNames = useMemo(() => {
+    if (selectedModels.length === 0) return 'Default (Claude)';
+    if (selectedModels.length === 1) {
+      const model = models.find(m => m.id === selectedModels[0]);
+      return model?.displayName || selectedModels[0];
+    }
+    return `${selectedModels.length} models`;
+  }, [selectedModels, models]);
+
   const handleToggle = (modelId) => {
     if (disabled) return;
 
@@ -75,15 +85,6 @@ function ModelSelector({ selectedModels, onModelChange, disabled }) {
       </div>
     );
   }
-
-  const selectedModelNames = useMemo(() => {
-    if (selectedModels.length === 0) return 'Default (Claude)';
-    if (selectedModels.length === 1) {
-      const model = models.find(m => m.id === selectedModels[0]);
-      return model?.displayName || selectedModels[0];
-    }
-    return `${selectedModels.length} models`;
-  }, [selectedModels, models]);
 
   return (
     <div>
