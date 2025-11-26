@@ -10,6 +10,52 @@ export default function AnalysisResults({ result }) {
   const results = hasMultipleResults ? result.results : [result];
   const originalText = result.original || '';
 
+  // TEMPORARY: Download function for development - remove in production
+  const handleDownload = () => {
+    const successfulResults = results.filter(r => !r.error);
+    if (successfulResults.length === 0) return;
+
+    let content = '='.repeat(60) + '\n';
+    content += 'BOUNDARY KEEPER - Analysis Results\n';
+    content += 'Generated: ' + new Date().toLocaleString() + '\n';
+    content += '='.repeat(60) + '\n\n';
+
+    content += 'ORIGINAL MESSAGE:\n';
+    content += '-'.repeat(40) + '\n';
+    content += originalText + '\n\n';
+
+    successfulResults.forEach((modelResult, index) => {
+      const modelName = modelResult.displayName || modelResult.modelId || 'Unknown Model';
+      const provider = modelResult.provider || '';
+
+      content += '='.repeat(60) + '\n';
+      content += `MODEL: ${modelName}${provider ? ` (${provider})` : ''}\n`;
+      content += '='.repeat(60) + '\n\n';
+
+      content += 'GREY ROCK VERSION:\n';
+      content += '-'.repeat(40) + '\n';
+      content += (modelResult.greyRock?.text || 'N/A') + '\n\n';
+
+      content += 'YELLOW ROCK VERSION:\n';
+      content += '-'.repeat(40) + '\n';
+      content += (modelResult.yellowRock?.text || 'N/A') + '\n\n';
+
+      if (index < successfulResults.length - 1) {
+        content += '\n';
+      }
+    });
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `boundary-keeper-${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-12 animate-fade-in">
       {results.map((modelResult, index) => {
@@ -97,6 +143,21 @@ export default function AnalysisResults({ result }) {
           </div>
         );
       })}
+
+      {/* TEMPORARY: Download button - remove in production */}
+      {results.some(r => !r.error) && (
+        <div className="flex justify-center pt-6">
+          <button
+            onClick={handleDownload}
+            className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors border border-slate-200"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Download All Results
+          </button>
+        </div>
+      )}
     </div>
   );
 }
